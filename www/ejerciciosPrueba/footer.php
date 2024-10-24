@@ -8,6 +8,7 @@
 <body>
 <?php
 $fecha=date('j/m/Y');
+echo "<br/>";
 echo "<span>&copy</span> 2024-205 DIWCS - Carmen Riesgo Lopez.  $fecha";
 ?>
 </body>
