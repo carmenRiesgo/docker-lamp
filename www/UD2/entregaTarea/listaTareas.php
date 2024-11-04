@@ -1,8 +1,8 @@
 <?php
-// listaTareas.php
+// listaTareas.php, 
 
 session_start();
-require 'utils.php';
+include 'utils.php';
 
 $tareas = obtenerTareas();
 ?>
@@ -31,8 +31,7 @@ $tareas = obtenerTareas();
                 <h2>Listado de Tareas</h2> 
             </div> 
             <div class="table">
-                    <table class="table table-striped table-hover">
-                        <!--<caption>Listado de Tareas</caption> -->   
+                    <table class="table table-striped table-hover">                    
                         <thead class="thead">
                             <tr>                            
                                 <th>Identificador</th>
@@ -41,6 +40,7 @@ $tareas = obtenerTareas();
                             </tr>
                         </thead>
                         <tbody>
+                            <!--Bucle para generar listado de tareas con datos introducidos en el formulario-->
                             <?php foreach ($tareas as $tarea): ?>
                             <tr>
                                 <td><?php echo $tarea['id']; ?></td>
@@ -54,8 +54,8 @@ $tareas = obtenerTareas();
         </div>
     </div>
     <!--footer-->
-    <?php
+        <?php
           include 'footer.php';
-          ?>
+        ?>
 </body>
 </html>

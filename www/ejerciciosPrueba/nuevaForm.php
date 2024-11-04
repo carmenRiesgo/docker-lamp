@@ -21,14 +21,15 @@
                     <h2>Creación nuevas tareas</h2>
             </div>
             <div>
+            
                 <form class="mb-5" name="creación-tareas" action="nueva.php" method="post">
                     <div class="mb-3">    
-                        <label class="form-label" for="Identificador">Identificador:</label><br>
-                        <input class="form-control" type="text" id="Identificador" name="fname"><br>
+                        <label class="form-label" for="id">Identificador:</label><br>
+                        <input class="form-control" type="text" id="id" name="id"><br>
                     </div>
                     <div class="mb-3">  
-                        <label class="form-label" for="Descripcion">Descripción:</label><br>
-                        <input class="form-control" type="text" id="Descripcion" name="descripcion"><br>
+                        <label class="form-label" for="descripcion">Descripción:</label><br>
+                        <input class="form-control" type="text" id="descripcion" name="descripcion"><br>
                     </div>
                     <div class="mb-3"> 
                         <label for="estado">Elige un estado</label>
@@ -36,7 +37,7 @@
                         <option value="pendiente">Pendiente</option>
                         <option value="en proceso">En proceso</option>
                         <option value="completada">Completada</option>
-                    </select>
+                    </select>                   
                     <br>
                     </div>
                     <button type="submit" class="btn btn-primary">Enviar</button>

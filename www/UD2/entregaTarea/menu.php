@@ -1,8 +1,8 @@
-
+<!--apartado 2, tarea UD2, código html para generar el menú de opciones del formulario nuevaForm.php-->
 <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
 <div class="position-sticky">
     <ul class="nav flex-column">
-    <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="index.php" alt="Enlace a menú principal">
                OPCIONES DISPONIBLES
             </a>
