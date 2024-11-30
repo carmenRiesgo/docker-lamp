@@ -72,10 +72,7 @@ function createTablaUsuarios()
             $sqlCheck = "SHOW TABLES LIKE 'usuarios'";
             $resultado = $conexion->query($sqlCheck);
 
-            if ($resultado && $resultado->num_rows > 0)
-            {
-                return [false, 'La tabla "usuarios" ya existía.'];
-            }
+            if ($resultado && $resultado->num_rows > 0)CREATE TABLE `tareas`.`usuarios` () ENGINE = InnoDB; 
 
             $sql = '
                 CREATE TABLE IF NOT EXISTS `tienda`.`usuarios` (
