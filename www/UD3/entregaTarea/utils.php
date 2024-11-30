@@ -1,5 +1,5 @@
 <?php
-
+/* NO VALE PORQUE EN NUESTRA TAREA LLEVA GET
 $tareas = [
         [
             'id' => 1,
@@ -22,6 +22,7 @@ $tareas = [
             'estado' => 'Completada'
         ]
     ];
+    */
 
 function tareas()
 {
