@@ -246,6 +246,31 @@ function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
     }
 }
 
+
+
+function listaUsuarios() {
+    try {
+        $conn = establecerConexionPDO('tareas');
+        $sql = 'SELECT * FROM usuarios';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // Obtener los resultados
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Retornar éxito y los resultados
+        return [true, $resultados];
+    } catch (PDOException $e) {
+        // En caso de error, retornar false y el mensaje de error
+        return [false, $e->getMessage()];
+    } finally {
+        $conn = null; // Cerrar conexión
+    }
+}
+
+
+
+
 function listaTareas() {
     try {
         $conexion = conexionMysqli('db', 'root', 'test', 'tareas');
