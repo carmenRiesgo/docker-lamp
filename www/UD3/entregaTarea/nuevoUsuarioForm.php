@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UD2. Tarea</title>
+    <title>UD3. Tarea</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -21,11 +21,8 @@
                 </div>
 
                 <div class="container justify-content-between">
-                    <form action="nuevoUsuario.php" method="GET" class="mb-5 w-50">
-                        <div class="mb-3">
-                            <label for="id" class="form-label">Identificador</label>
-                            <input type="text" class="form-control" id="id" name="id" required>
-                        </div>
+                    <form action="nuevoUsuario.php" method="POST" class="mb-5 w-50">
+                        
                         <div class="mb-3">
                             <label for="username" class="form-label">Usuario</label>
                             <input type="text" class="form-control" id="username" name="username" required>

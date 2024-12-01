@@ -29,7 +29,7 @@
                 'estado' => filtrarEntrada($estado)
             ];
             $_SESSION['tareas'][] = $nuevaTarea;
-            return true
+            return true;
         return false;
     }
 

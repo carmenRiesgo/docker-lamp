@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UD2. Tarea</title>
+    <title>UD3. TareaUD03</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -23,22 +23,35 @@
                 <div class="container justify-content-between">
                     <form action="nueva.php" method="POST" class="mb-5 w-50">
                         <div class="mb-3">
-                            <label for="id" class="form-label">Identificador</label>
-                            <input type="text" class="form-control" id="id" name="id" required>
+                            <label for="titulo" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
                         </div>
                         <div class="mb-3">
                             <label for="descripcion" class="form-label">Descripción</label>
                             <input type="text" class="form-control" id="descripcion" name="descripcion" required>
                         </div>
                         <div class="mb-3">
-                            <label for="estado" class="form-label">Estado</label>
-                            <select class="form-select" id="estado" name="estado" required>
-                                <option value="" selected disabled>Seleccione el estado</option>
-                                <option value="en_proceso">En Proceso</option>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="completada">Completada</option>
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado" required>
+                            <option value="" selected disabled>Seleccione el estado</option>
+                            <option value="en_proceso">En Proceso</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="completada">Completada</option>
+                        </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_usuario" class="form-label">ID del Usuario</label>
+                            <input type="hidden" name="id_usuario" value="<?php echo $id_usuario ?? '' ?>">
+                            <select class="form-select" id="id_usuario" name="id_usuario" required <?php echo isset($id_usuario) ? 'disabled' : '' ?>>
+                                <option <?php echo !isset($id_usuario) ? 'selected' : '' ?> disabled value="">Seleccione un id_usuario</option>
+                                <?php foreach ($id_usuarios as $id_usuario): ?>
+                                    <option value="<?= $id_usuario['id']; ?>" <?php echo isset($id_usuario) && $id_usuario == $id_usuario['id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($id_usuario['nombre']); ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
+
                         <button type="submit" class="btn btn-primary">Enviar</button>
                     </form>
                 </div>

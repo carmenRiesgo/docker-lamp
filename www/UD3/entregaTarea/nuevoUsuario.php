@@ -22,40 +22,51 @@
 
                 <div class="container justify-content-between">
                     <?php
-                    if (!empty($_GET))
-                    {
-                        require_once('utils.php');
-                        $username = filtraCampo($_POST['username']);
-                        $nombre = filtraCampo($_POST['nombre']);
-                        $apellidos = filtraCampo($_POST['apellidos']);
-                        $contraseña = filtraCampo($_POST['contraseña']);
+                
+                    require ('funcionesDB.php');
+                    require_once ('./conexiones/PDO.php');
+                    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                    $username = $_POST['username'];
+                    $nombre = $_POST['nombre'];
+                    $apellidos = $_POST['apellidos'];
+                    $contraseña = $_POST['contraseña'];
                     
+                    if (!empty($_POST))
+                    {
+                        $username = entradaValida($_POST['username']);
+                        $nombre = entradaValida($_POST['nombre']);
+                        $apellidos = entradaValida($_POST['apellidos']);
+                        $contraseña = entradaValida($_POST['contraseña']);
+                    }
+
+                    if (entradaValida($username) && entradaValida($nombre) && entradaValida($apellidos) && entradaValida($contraseña)) {
+                    $error=false;
                     // Validar  que no haya errores en los campos
-                    if (!validarCampoTexto($username))
+                    /*if (!validarCampoTexto($username, 50))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa el nombre de usuario**</div>';
                     }
-                    if (!validarCampoTexto($nombre))
+                    if (!validarCampoTexto($nombre, 50))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa el nombre**</div>';
                     }
                     
-                    if (!validarCampoTexto($apellidos))
+                    if (!validarCampoTexto($apellidos, 100))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa los apellidos**</div>';
                     }
-                    if (!validarCampoTexto($contraseña))
+                    if (!validarCampoTexto($contraseña, 100))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa la contraseña**</div>';
-                    }
+                    }*/
 
-                    if(!error)
+                    if(!$error)
                     {
-                        require_once('pdo.php');
+                       
                         if (nuevoUsuario($username, $nombre, $apellidos, $contraseña))
                         {
                             echo '<div class="alert alert-success" role="alert">Usuario registrado correctamente.</div>'; 
@@ -68,7 +79,7 @@
                          
                     }
                 }
-
+            }
                 ?>
                 </div>
             </main>
