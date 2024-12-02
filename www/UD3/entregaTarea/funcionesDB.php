@@ -219,83 +219,119 @@
             }
         }
 
-//Función para borrar usuario y todas las tareas relacionadas.
+        //Función para borrar usuario y todas las tareas relacionadas.
 
-function borrarUsuario($id_usuario) {
-    try {
-     
-        $conn = establecerConexionPDO('tareas');
-
-        // Iniciar una transacción para garantizar consistencia
-        $conn->beginTransaction();
-
-        $sql='SELECT * FROM usuarios WHERE id = :id_usuario';
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-        $stmt->execute();
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$usuario) {
-            // Si el usuario no existe, cancelar la transacción y devolver error
-            $conn->rollBack();
-            return [false, "El usuario con ID $id_usuario no existe."];
-        }
-
-        // Eliminar las tareas asociadas al usuario
-        $sqlBorradoTareas='DELETE FROM tareas WHERE id_usuario = :id_usuario';
-        $stmt = $conn->prepare($sqlBorradoTareas);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Eliminar al usuario
-        $sqlBorradoUsuario='DELETE FROM usuarios WHERE id = :id_usuario';
-        $stmt = $conn->prepare($sqlBorradoUsuario);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Confirmar la transacción
-        $conn->commit();
-
-        return [true, "El usuario con ID $id_usuario y sus tareas relacionadas han sido eliminados."];
-    } catch (PDOException $e) {
-        // En caso de error, deshacer la transacción
-        $conn->rollBack();
-        return [false, "Error al borrar el usuario: " . $e->getMessage()];
-    } finally {
-        $conn = null; // Cerrar la conexión
-    }
-}
-
-
-
-function listaTareas() {
-    try {
-        $conexion = conexionMysqli('db', 'root', 'test', 'tareas');
-
-        if ($conexion->connect_error)
-        {
-            return [false, $conexion->error];
-        }
-        else
-        {
-            // Consulta SQL para obtener los datos de tareas y usuarios
-            $sql = "SELECT t.id, t.titulo, t.descripcion, t.estado, u.nombre AS nombre_usuario
-             FROM tareas t
-             INNER JOIN usuarios u ON t.id_usuario = u.id";
+        function borrarUsuario($id_usuario) {
+            try {
             
-            $resultados = $conexion->query($sql);
-            return [true, $resultados->fetch_all(MYSQLI_ASSOC)];
+                $conn = establecerConexionPDO('tareas');
+
+                // Iniciar una transacción para garantizar consistencia
+                $conn->beginTransaction();
+
+                $sql='SELECT * FROM usuarios WHERE id = :id_usuario';
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+                $stmt->execute();
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$usuario) {
+                    // Si el usuario no existe, cancelar la transacción y devolver error
+                    $conn->rollBack();
+                    return [false, "El usuario con ID $id_usuario no existe."];
+                }
+
+                // Eliminar las tareas asociadas al usuario
+                $sqlBorradoTareas='DELETE FROM tareas WHERE id_usuario = :id_usuario';
+                $stmt = $conn->prepare($sqlBorradoTareas);
+                $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+                $stmt->execute();
+
+                // Eliminar al usuario
+                $sqlBorradoUsuario='DELETE FROM usuarios WHERE id = :id_usuario';
+                $stmt = $conn->prepare($sqlBorradoUsuario);
+                $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+                $stmt->execute();
+
+                // Confirmar la transacción
+                $conn->commit();
+
+                return [true, "El usuario con ID $id_usuario y sus tareas relacionadas han sido eliminados."];
+            } catch (PDOException $e) {
+                // En caso de error, deshacer la transacción
+                $conn->rollBack();
+                return [false, "Error al borrar el usuario: " . $e->getMessage()];
+            } finally {
+                $conn = null; // Cerrar la conexión
+            }
+        }
+
+//FUNCIONES PARA GESTIONAR TAREAS
+        //Función que lista tareas con nombre de usuario que las realizó
+        function listaTareas() {
+            try {
+                $conexion = conexionMysqli('db', 'root', 'test', 'tareas');
+
+                if ($conexion->connect_error)
+                {
+                    return [false, $conexion->error];
+                }
+                else
+                {
+                    // Consulta SQL para obtener los datos de tareas y usuarios
+                    $sql = "SELECT t.id, t.titulo, t.descripcion, t.estado, u.nombre AS nombre_usuario
+                    FROM tareas t
+                    INNER JOIN usuarios u ON t.id_usuario = u.id";
+                    
+                    $resultados = $conexion->query($sql);
+                    return [true, $resultados->fetch_all(MYSQLI_ASSOC)];
+                }
+                
+            }
+            catch (mysqli_sql_exception $e) {
+                return [false, $e->getMessage()];
+            }
+            finally
+            {
+                cerrarConexion($conexion);
+            }
+        }
+
+        //Función para borrar tareas
+        function borrarTarea($id){
+            try {
+                $conexion = conexionMysqli('db', 'root', 'test', 'tareas');
+
+                if ($conexion->connect_error)
+                {
+                    return [false, $conexion->error];
+                }
+                else
+                {
+                    // Consulta SQL para borrarr los datos de tareas.
+                    $sql = "DELETE FROM tareas t WHERE id = $id";
+                    
+                    // Ejecutar la consulta
+                if ($conexion->query($sql)) {
+                    if ($conexion->affected_rows > 0) {
+                        return [true, "La tarea con ID $id ha sido eliminada."];
+                    } else {
+                        return [false, "No se encontró ninguna tarea con ID $id para eliminar."];
+                    }
+                } else {
+                    return [false, "Error en la consulta: " . $conexion->error];
+                }
+                }
+                
+            }
+            catch (mysqli_sql_exception $e) {
+                return [false, $e->getMessage()];
+            }
+            finally
+            {
+                cerrarConexion($conexion);
+            }
         }
         
-    }
-    catch (mysqli_sql_exception $e) {
-        return [false, $e->getMessage()];
-    }
-    finally
-    {
-        cerrarConexion($conexion);
-    }
-}
-
 
 ?>

@@ -37,7 +37,23 @@
                                 <?php
                                 // Conectar a la base de datos
                                 include_once('./conexiones/mysqli.php');
-
+                                if (!empty($_GET['id']))
+                                {
+                                    $id = intval($_GET['id']);
+                                    $resultado = borrarTarea($id);
+                                    if ($resultado[0])
+                                    {                           
+                                            echo '<div class="alert alert-success" role="alert">Tarea borrada correctamente.</div>';
+                                    }
+                                    else
+                                    {
+                                            echo '<div class="alert alert-danger" role="alert">No se pudo borrar la tarea.</div>';
+                                    }
+                                }
+                                else
+                                {
+                                    echo '<div class="alert alert-danger" role="alert">Debes acceder a través del listado de usuarios.</div>';
+                                }
                                 $lista = listaTareas();
                                 if ($lista[0]) {
                                     $tareas = $lista[1];   
