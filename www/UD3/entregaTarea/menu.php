@@ -33,6 +33,11 @@
                     Lista de tareas
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="buscaTareas.php">
+                    Buscar tarea
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

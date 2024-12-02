@@ -23,48 +23,100 @@
                 <div class="container justify-content-between">
                     <?php
                 
-                    require ('funcionesDB.php');
+
+                require('funcionesDB.php'); // Define funciones como nuevoUsuario()
+                require_once('./conexiones/PDO.php'); // Define la conexión a la base de datos
+                
+                if (!empty($_POST)) {
+                    // Validar entradas
+                    $username = entradaValida($_POST['username']);
+                    $nombre = entradaValida($_POST['nombre']);
+                    $apellidos = entradaValida($_POST['apellidos']);
+                    $contraseña = entradaValida($_POST['contraseña']); // Asegúrate de que esta función cifre la contraseña
+        
+                    // Inicializar bandera de error
+                    $error = false;
+                    $erroresFormulario = [];
+                
+                    // Verificar que los campos sean válidos
+                    if (!$username) {
+                        $erroresFormulario[] = "El nombre de usuario no es válido.";
+                        $error = true;
+                    }
+                
+                    if (!$nombre) {
+                        $erroresFormulario[] = "El nombre no es válido.";
+                        $error = true;
+                    }
+                
+                    if (!$apellidos) {
+                        $erroresFormulario[] = "Los apellidos no son válidos.";
+                        $error = true;
+                    }
+                
+                    if (!$contraseña) {
+                        $erroresFormulario[] = "La contraseña no cumple con los requisitos.";
+                        $error = true;
+                    }
+                  
+                    // Si no hay errores, intentar registrar al usuario
+           
+                    if (!$error) {
+                        if(nuevoUsuario($username, $nombre, $apellidos, $contraseña)){
+                                echo '<div class="alert alert-success" role="alert">Usuario registrado correctamente.</div>';
+                                } else {
+                                echo '<div class="alert alert-danger" role="alert">Ocurrió un error registrando el usuario. Por favor, intenta nuevamente.</div>';
+                                }
+                    }else {
+                        // Mostrar errores del formulario
+                        echo '<div class="alert alert-warning" role="alert">';
+                        echo '<strong>No se pudo procesar el formulario:</strong><br>';
+                        echo '<ul>';
+                        foreach ($erroresFormulario as $error) {
+                                echo '<li>' . htmlspecialchars($error) . '</li>';
+                                }
+                        echo '</ul></div>';
+                        }
+                
+                
+                    }
+                    /*require ('funcionesDB.php');
                     require_once ('./conexiones/PDO.php');
-                    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-                    $username = $_POST['username'];
-                    $nombre = $_POST['nombre'];
-                    $apellidos = $_POST['apellidos'];
-                    $contraseña = $_POST['contraseña'];
-                    
+                                                        
                     if (!empty($_POST))
                     {
                         $username = entradaValida($_POST['username']);
                         $nombre = entradaValida($_POST['nombre']);
                         $apellidos = entradaValida($_POST['apellidos']);
-                        $contraseña = entradaValida($_POST['contraseña']);
-                    }
+                        $contraseña = contraseñaValida($_POST['contraseña']);
+                    
 
-                    if (entradaValida($username) && entradaValida($nombre) && entradaValida($apellidos) && entradaValida($contraseña)) {
+                   if (entradaValida($username) && entradaValida($nombre) && entradaValida($apellidos) && contraseñaValida($contraseña)) {
                     $error=false;
-                    // Validar  que no haya errores en los campos
-                    /*if (!validarCampoTexto($username, 50))
+                  /* // Validar  que no haya errores en los campos
+                    if (!validarLongitudCampo($conn, 'tareas', 'username', 100))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa el nombre de usuario**</div>';
                     }
-                    if (!validarCampoTexto($nombre, 50))
+                    if (!validarLongitudCampo($conn, 'tareas', 'nombre', 50))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa el nombre**</div>';
                     }
                     
-                    if (!validarCampoTexto($apellidos, 100))
+                    if (!validarLongitudCampoTexto($conn, 'tareas', 'apellidos', 100))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa los apellidos**</div>';
                     }
-                    if (!validarCampoTexto($contraseña, 100))
+                    if (!validarLongitudCampoTexto($conn, 'tareas', 'contraseña', 100))
                     {
                         $error=true;
                         echo '<div class="alert-danger" role="alert">**Revisa la contraseña**</div>';
-                    }*/
-
-                    if(!$error)
+                    }
+                    
+                    if($error)
                     {
                        
                         if (nuevoUsuario($username, $nombre, $apellidos, $contraseña))
@@ -77,9 +129,10 @@
                     }  else {
                         echo '<div class="alert alert-warning" role="alert">No se pudo procesar el contenido del formulario.</div>';
                          
-                    }
-                }
-            }
+                    }*/
+                
+                
+                
                 ?>
                 </div>
             </main>
