@@ -1,4 +1,13 @@
-<!DOCTYPE html>
+$id_donante = null;
+                    if (!empty($_GET) && isset($_GET['id']))
+                    {
+                        $id_donante = $_GET['id'];
+                    }
+                    $donaciones = listaDonaciones($id_donante);
+                    if ($donaciones && count($donaciones) > 0)
+                    {
+
+                        <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -37,7 +46,11 @@
                                 <?php
                                 // Conectar a la base de datos
                                 include_once('./conexiones/PDO.php');
-                                $lista = listaUsuarios();
+                                $id_usuario=null;
+                                if (!empty ($_GET)&&isset($_GET['id'])){
+                                    $id_usuario=$_GET['id'];
+                                }
+                                $lista = listaUsuarios($id_usuario);
                                 if ($lista[0]){
                                     $usuarios = $lista[1]; 
                                     if ($usuarios){ 
@@ -72,3 +85,4 @@
     
 </body>
 </html>
+                          

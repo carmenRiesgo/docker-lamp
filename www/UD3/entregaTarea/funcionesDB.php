@@ -195,10 +195,14 @@
         }  
 
         //Función que lista los usuarios y permite acceder a su edición y borrado
-        function listaUsuarios() {
+        function listaUsuarios($id_usuario=null) {
+
             try {
                 $conn = establecerConexionPDO('tareas');
                 $sql = 'SELECT * FROM usuarios';
+                if ($id_usuario!==null) {
+                $sql=$sql." WHERE id=$id_usuario";}
+           
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
 
@@ -215,6 +219,52 @@
             }
         }
 
+//Función para borrar usuario y todas las tareas relacionadas.
+
+function borrarUsuario($id_usuario) {
+    try {
+     
+        $conn = establecerConexionPDO('tareas');
+
+        // Iniciar una transacción para garantizar consistencia
+        $conn->beginTransaction();
+
+        $sql='SELECT * FROM usuarios WHERE id = :id_usuario';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario) {
+            // Si el usuario no existe, cancelar la transacción y devolver error
+            $conn->rollBack();
+            return [false, "El usuario con ID $id_usuario no existe."];
+        }
+
+        // Eliminar las tareas asociadas al usuario
+        $sqlBorradoTareas='DELETE FROM tareas WHERE id_usuario = :id_usuario';
+        $stmt = $conn->prepare($sqlBorradoTareas);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Eliminar al usuario
+        $sqlBorradoUsuario='DELETE FROM usuarios WHERE id = :id_usuario';
+        $stmt = $conn->prepare($sqlBorradoUsuario);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Confirmar la transacción
+        $conn->commit();
+
+        return [true, "El usuario con ID $id_usuario y sus tareas relacionadas han sido eliminados."];
+    } catch (PDOException $e) {
+        // En caso de error, deshacer la transacción
+        $conn->rollBack();
+        return [false, "Error al borrar el usuario: " . $e->getMessage()];
+    } finally {
+        $conn = null; // Cerrar la conexión
+    }
+}
 
 
 
