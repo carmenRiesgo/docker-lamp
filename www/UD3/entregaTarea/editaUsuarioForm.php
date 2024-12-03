@@ -1,13 +1,4 @@
-$id_donante = null;
-                    if (!empty($_GET) && isset($_GET['id']))
-                    {
-                        $id_donante = $_GET['id'];
-                    }
-                    $donaciones = listaDonaciones($id_donante);
-                    if ($donaciones && count($donaciones) > 0)
-                    {
-
-                        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -23,59 +14,66 @@ $id_donante = null;
         <div class="row">
             
             <?php include_once('menu.php'); ?>
-
+      
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="container justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h2>Listado de Usuarios</h2>
+                    <h2>Nuevo Usuario</h2>
                 </div>
-
+                <?php
+                        require_once('./conexiones/PDO.php')
+                        require_once('funcionesDB.php');
+                        
+                        if (!empty($_GET))
+                        {
+                            $id = $_GET['id'];
+                            $resultado = buscaUsuario($id);
+                            if (!empty($id) && $resultado[0])
+                            {
+                                $usuario = $resultado[1];
+                                $username= $usuario['username'];
+                                $nombre = $usuario['nombre'];
+                                $apellidos = $usuario['apellidos'];
+                                $contraseña = $usuario['contrasena'];
+                               
+                        ?>
+                            <input type="hidden" name="id" value="<?php echo $id ?>">
+                            <?php include_once('form.php'); ?>
+                            
                 <div class="container justify-content-between">
-                <?php require_once('funcionesDB.php'); ?>
-                    <div class="table">
-                        <table class="table table-striped table-hover">
-                            <thead class="thead">
-                                <tr>                            
-                                   <th>Id Usuario</th>    
-                                    <th>Nombre</th>
-                                    <th>Apellidos</th>
-                                    <th>Usuario</th>
-                                    <th>contrasena</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                // Conectar a la base de datos
-                                include_once('./conexiones/PDO.php');
-                                $id_usuario=null;
-                                if (!empty ($_GET)&&isset($_GET['id'])){
-                                    $id_usuario=$_GET['id'];
-                                }
-                                $lista = listaUsuarios($id_usuario);
-                                if ($lista[0]){
-                                    $usuarios = $lista[1]; 
-                                    if ($usuarios){ 
-                                        foreach ($usuarios as $usuario) 
-                                        {
-                                                    echo '<tr>';
-                                                    echo '<td>' . $usuario['id'] . '</td>';
-                                                    echo '<td>' . $usuario['nombre'] . '</td>';
-                                                    echo '<td>' . $usuario['apellidos'] . '</td>';
-                                                    echo '<td>' . $usuario['username'] . '</td>';
-                                                    echo '<td>' . $usuario['contraseña'] . '</td>';
-                                                    echo '<td>'. '<a class="btn btn-outline-success btn-sm me-1" href="editaUsuarioForm.php?id=' . $usuario['id'] . '" role="button">Editar</a>'.'</td>' ;
-                                                    echo '<td>'. '<a class="btn btn-outline-danger btn-sm" href="borrarUsuario.php?id=' . $usuario['id'] . '" role="button">Borrar</a>'.'<td>' ;
-                                                    echo '</tr>'; 
-                                        }
-                                    } else {
-                                            echo '<tr><td colspan="100">No hay usuarios registrados</td></tr>';
-                                    } 
-                                } else {                              
-                                         echo '<tr><td colspan="100">Error recuperando usuarios: '  . $lista[1]. '</td></tr>';
-                                    }                           
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
+                    <form action="editaUsuario.php" method="POST" class="mb-5 w-50">
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="username" name="username" value="<?php echo isset($username) ? htmlspecialchars($username) : '' ?>"required>
+                         
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo isset($nombre) ? htmlspecialchars($nombre) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidos" class="form-label">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" value="<?php echo isset($apellidos) ? htmlspecialchars($apellidos) : '' ?>"required>                           
+                        </div>
+                        <div class="mb-3">
+                            <label for="contraseña" class="form-label">Contraseña</label>
+                            <input type="text" class="form-control" id="contraseña" name="contraseña" value="<?php echo isset($contraseña) ? htmlspecialchars($contraseña) : '' ?>"required>                            
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
+                        <?php
+                            }
+                            else
+                            {
+                                echo '<div class="alert alert-danger" role="alert">No se pudo recuperar la información del usuario.</div>';
+                            }
+                        }
+                        else
+                        {
+                            echo '<div class="alert alert-danger" role="alert">Debes acceder a través del listado de usuarios.</div>';
+                        }
+                        ?>
+                        <button type="submit" class="btn btn-primary">Modificar</button>
+                    </form>
                 </div>
             </main>
         </div>
@@ -85,4 +83,3 @@ $id_donante = null;
     
 </body>
 </html>
-                          

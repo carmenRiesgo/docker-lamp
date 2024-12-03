@@ -219,6 +219,48 @@
         }
 
         //Función para borrar usuario y todas las tareas relacionadas.
+        function buscaUsuario($id)
+{
+    try {
+        $conn = establecerConexionPDO('tareas');
+
+        if ($conn->connect_error)
+        {
+            return [false, $conexion->error];
+        }
+        else
+        {
+            $sql = "SELECT * FROM usuarios WHERE id = " . $id;
+            $resultados = $conexion->query($sql);
+            if ($resultados->num_rows == 1)
+            {
+                return [true, $resultados->fetch_assoc()];
+            }
+            else
+            {
+                return [false, 'No se pudo recuperar el alumno.'];
+            }
+            
+        }
+        
+    }
+    catch (mysqli_sql_exception $e) {
+        return [false, $e->getMessage()];
+    }
+    finally
+    {
+        $con=null;
+    }
+}
+
+
+
+
+        function editarUsuario($id){
+
+
+        }
+
 
         function borrarUsuario($id_usuario) {
             try {
