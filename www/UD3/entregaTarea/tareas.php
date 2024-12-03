@@ -42,12 +42,11 @@
                                 if (!empty ($_GET)&&isset($_GET['usuario'])){
                                     $usuario=$_GET['usuario'];
                                     $lista=listaTareasPDO($usuario);
-                                    
-                                }
-                                else
-                                {
+                                    }
+                                    else
+                                    {
                                     $lista = listaTareas();
-                                }
+                                    }
                                 if ($lista[0]) {
                                     $tareas = $lista[1];   
                                     foreach ($tareas as $tarea) {

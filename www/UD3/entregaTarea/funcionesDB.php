@@ -280,19 +280,15 @@
             try {
                 $conn = establecerConexionPDO('tareas');
                 
-                // Consulta SQL para obtener los datos de tareas y usuarios
-                $sql = "SELECT t.id, t.titulo, t.descripcion, t.estado, u.nombre AS nombre_usuario
-                FROM tareas t
-                INNER JOIN usuarios u ON t.id_usuario = u.id";
-
+                
                 if ($usuario!==null) {
-                $sql=  "SELECT t.id, t.descripcion, t.estado, u.nombre AS nombre_usuario
+                $sql=  "SELECT t.id, t.titulo, t.descripcion, t.estado, u.nombre AS nombre_usuario
                         FROM  tareas t INNER JOIN usuarios u 
                         ON 
                             t.id_usuario = u.id
                         WHERE 
-                            u.username = $usuario";
-                            }
+                            u.username = '$usuario'";
+                } 
            
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
@@ -300,8 +296,31 @@
                 // Obtener los resultados
                 $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                // Retornar éxito y los resultados
-                return [true, $resultados];
+                if (count($resultados)> 0) {
+                    // Si hay resultados, mostrar solo las tareas que cumplen la condición
+                    return [true, $resultados];
+                } else {
+                    // Si no hay resultados, mostrar todas las tareas
+                    
+                    $sql_all = "SELECT 
+                                    t.id,
+                                    t.titulo,
+                                    t.descripcion,
+                                    t.estado,
+                                    u.nombre AS nombre_usuario
+                                FROM 
+                                    tareas t
+                                INNER JOIN 
+                                    usuarios u 
+                                ON 
+                                    t.id_usuario = u.id";
+                    $stmt = $conn->prepare($sql_all);
+                    $stmt->execute();
+
+                    // Obtener los resultados
+                    $resultados_all = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    // Retornar éxito y los resultados
+                    return [true, $resultados_all];}
             } catch (PDOException $e) {
                 // En caso de error, retornar false y el mensaje de error
                 return [false, $e->getMessage()];
