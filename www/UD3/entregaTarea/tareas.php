@@ -36,9 +36,18 @@
                             <tbody>
                                 <?php
                                 // Conectar a la base de datos
+                                include_once('./conexiones/PDO.php');
                                 include_once('./conexiones/mysqli.php');
-
-                                $lista = listaTareas();
+                                $usuario=null;
+                                if (!empty ($_GET)&&isset($_GET['usuario'])){
+                                    $usuario=$_GET['usuario'];
+                                    $lista=listaTareasPDO($usuario);
+                                    
+                                }
+                                else
+                                {
+                                    $lista = listaTareas();
+                                }
                                 if ($lista[0]) {
                                     $tareas = $lista[1];   
                                     foreach ($tareas as $tarea) {

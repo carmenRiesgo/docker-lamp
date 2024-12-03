@@ -195,29 +195,7 @@
         }  
 
         //Función que lista los usuarios y permite acceder a su edición y borrado
-        function listaUsuarios($id_usuario=null) {
-
-            try {
-                $conn = establecerConexionPDO('tareas');
-                $sql = 'SELECT * FROM usuarios';
-                if ($id_usuario!==null) {
-                $sql=$sql." WHERE id=$id_usuario";}
-           
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-
-                // Obtener los resultados
-                $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                // Retornar éxito y los resultados
-                return [true, $resultados];
-            } catch (PDOException $e) {
-                // En caso de error, retornar false y el mensaje de error
-                return [false, $e->getMessage()];
-            } finally {
-                $conn = null; // Cerrar conexión
-            }
-        }
+        
 
         //Función para borrar usuario y todas las tareas relacionadas.
 
@@ -294,6 +272,41 @@
             finally
             {
                 cerrarConexion($conexion);
+            }
+        }
+
+        function listaTareasPDO($usuario=null) {
+
+            try {
+                $conn = establecerConexionPDO('tareas');
+                
+                // Consulta SQL para obtener los datos de tareas y usuarios
+                $sql = "SELECT t.id, t.titulo, t.descripcion, t.estado, u.nombre AS nombre_usuario
+                FROM tareas t
+                INNER JOIN usuarios u ON t.id_usuario = u.id";
+
+                if ($usuario!==null) {
+                $sql=  "SELECT t.id, t.descripcion, t.estado, u.nombre AS nombre_usuario
+                        FROM  tareas t INNER JOIN usuarios u 
+                        ON 
+                            t.id_usuario = u.id
+                        WHERE 
+                            u.username = $usuario";
+                            }
+           
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+
+                // Obtener los resultados
+                $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Retornar éxito y los resultados
+                return [true, $resultados];
+            } catch (PDOException $e) {
+                // En caso de error, retornar false y el mensaje de error
+                return [false, $e->getMessage()];
+            } finally {
+                $conn = null; // Cerrar conexión
             }
         }
 
