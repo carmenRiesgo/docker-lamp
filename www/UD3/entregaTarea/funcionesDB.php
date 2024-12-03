@@ -55,16 +55,14 @@
                         return [false, 'La tabla "usuarios" ya existe'];
                     } 
                     //creación de la tabla usuarios.
-                    $sql = '
-                        CREATE TABLE IF NOT EXISTS `tareas`.`usuarios` (
-                        `id` INT NOT NULL AUTO_INCREMENT , 
-                        `username` VARCHAR(50) NOT NULL ,
-                        `nombre` VARCHAR(50) NOT NULL ,
-                        `apellidos` VARCHAR(100) NOT NULL ,
-                        `contraseña` VARCHAR(100) NOT NULL ,
-                        PRIMARY KEY (`id`)
-                        )
-                        ';
+                    $sql = 'CREATE TABLE IF NOT EXISTS usuarios (
+                        id INT NOT NULL AUTO_INCREMENT , 
+                        username VARCHAR(50) NOT NULL ,
+                        nombre VARCHAR(50) NOT NULL ,
+                        apellidos VARCHAR(100) NOT NULL ,
+                        contraseña VARCHAR(100) NOT NULL ,
+                        PRIMARY KEY (id)
+                        )';
                     if ($conexion->query($sql))
                     {
                         return [true, 'Tabla "usuarios" creada correctamente'];
@@ -99,17 +97,15 @@
                         return [false, 'La tabla "tareas" ya existe'];
                     }    
                     //Crear tabla tareas
-                    $sql = '
-                        CREATE TABLE `tareas`.`tareas` (
-                        `id` INT NOT NULL AUTO_INCREMENT , 
-                        `titulo` VARCHAR(50) NOT NULL , 
-                        `descripcion` VARCHAR(250) NOT NULL , 
-                        `estado` VARCHAR(50) NOT NULL , 
-                        `id_usuario` INT NOT NULL , 
-                        PRIMARY KEY (`id`),
-                        FOREIGN KEY (`id_usuario`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
-                        )
-                        ';
+                    $sql = "CREATE TABLE tareas (
+                        id INT  AUTO_INCREMENT NOT NULL, 
+                        titulo VARCHAR(50) NOT NULL , 
+                        descripcion VARCHAR(250) NOT NULL , 
+                        estado VARCHAR(50) NOT NULL , 
+                        id_usuario INT NOT NULL , 
+                        PRIMARY KEY (id),
+                        FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+                        )";
                     }
                     if ($conexion->query($sql))
                     {
@@ -144,7 +140,7 @@
     //Función que permite ver que la entrada ya filtrada es válida y el campo no está vacío
         function entradaValida($entrada) {
             $entrada=filtrarEntrada($entrada);
-            return !empty($entrada);
+            if (!empty($entrada)) return $entrada;
             }
 
     //Función que valida contraseña.
@@ -155,34 +151,42 @@
             }
 
 
-    //Función que valida los campos de tipo VARCHAR
-        function validarCampoTexto($campo)
-        {
-            return (!empty(filtrarEntrada($campo) && validarLargoCampo($campo)));
-        }
-    //Función que valida la longitud de los campos para que no queden vacíos. 
-        function validarLargoCampo($campo)
-        {
-            return (strlen(trim($campo)) > 2);
-        }
+    
+function validarCampoTexto($entrada)
+{
+    return ((!empty(filtrarEntrada($entrada))) && (validarLargoCampo($entrada)));
+}
+
+function validarLargoCampo($entrada)
+{
+    return (strlen(trim($entrada)) > 1);
+}
         
 //FUNCIONES PARA GESTIONAR USUARIOS
         //Función que crea un nuevo registro de usuario.
-        function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
+       /* function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
         {
             try {
                 $conn = establecerConexionPDO('tareas');
-
+        
                 $sql = "INSERT INTO usuarios (username, nombre, apellidos, contraseña)
                         VALUES (:username, :nombre, :apellidos, :contraseña)";
                 $stmt = $conn->prepare($sql);
-
+             
                 $stmt->bindParam(':username', $username, PDO::PARAM_STR);
                 $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
                 $stmt->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
                 $stmt->bindParam(':contraseña', $contraseña, PDO::PARAM_STR);
-        
-                return $stmt->execute();
+             
+                 $correcto=$stmt->execute();
+                 if($correcto) {
+                   $last_id = $conn->lastInsertId();
+                   return $last_id;  
+                 } else{
+                    error_log("error al insertar el usuario");
+                    return false;
+                 }
+               
             }
             catch (PDOException $e) {
                 error_log("Error al insertar el usuario: " . $e->getMessage());
@@ -193,6 +197,44 @@
                 $conn = null;
             }
         }  
+*/
+function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
+{
+    try {
+        // Establece conexión usando la función personalizada
+        $conn = establecerConexionPDO('tareas');
+
+        // Ajusta el nombre de la columna y los parámetros
+    
+        $sql= 'INSERT INTO usuarios (username, nombre, apellidos, contraseña) VALUES (:username, :nombre, :apellidos, :contraseña)';
+        $stmt = $conn->prepare($sql);
+
+        // Vincula los parámetros
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
+        $stmt->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
+        $stmt->bindParam(':contraseña', $contraseña, PDO::PARAM_STR);
+
+        // Ejecuta la consulta
+        $correcto = $stmt->execute();
+        if ($correcto) {
+            // Obtiene el ID de la última inserción
+            $last_id = $conn->lastInsertId();
+            return $last_id;
+        } else {
+            error_log("*******Error al insertar el usuario.");
+            return false;
+        }
+    } catch (PDOException $e) {
+        error_log("///////Error al insertar el usuario: " . $e->getMessage());
+        return false;
+    } finally {
+        // Limpia la conexión explícitamente (opcional)
+        $conn = null;
+    }
+}
+
+
 
         //Función que lista los usuarios y permite acceder a su edición y borrado
         
