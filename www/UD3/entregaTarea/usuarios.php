@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="container justify-content-between">
-                <?php require_once('funcionesDB.php'); ?>
+                <?php require('funcionesDB.php'); ?>
                     <div class="table">
                         <table class="table table-striped table-hover">
                             <thead class="thead">

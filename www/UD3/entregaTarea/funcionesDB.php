@@ -196,6 +196,27 @@
 
         //Función que lista los usuarios y permite acceder a su edición y borrado
         
+        function listaUsuarios() {
+
+            try {
+                $conn = establecerConexionPDO('tareas');
+                                            
+                $sql=  "SELECT * FROM   usuarios";        
+           
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+
+                // Obtener los resultados
+                $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    return [true, $resultados];
+                    
+            } catch (PDOException $e) {
+                // En caso de error, retornar false y el mensaje de error
+                return [false, $e->getMessage()];
+            } finally {
+                $conn = null; // Cerrar conexión
+            }
+        }
 
         //Función para borrar usuario y todas las tareas relacionadas.
 
