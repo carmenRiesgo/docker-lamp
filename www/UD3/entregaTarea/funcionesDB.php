@@ -143,96 +143,53 @@
             if (!empty($entrada)) return $entrada;
             }
 
-    //Función que valida contraseña.
-        function contraseñaValida($entrada){
-            $entrada = trim ($entrada);
-            return !empty(preg_match('/^[a-zA-Z0-9\*\?\&\%\@\!\$\#]+$/', $entrada)); 
-            var_dump($entrada);
-            }
+    //Función que valida que haya valores en la variable y que tenga una longitud mínima
+    function validarCampoTexto($entrada)
+    {
+        return ((!empty(filtrarEntrada($entrada))) && (validarLargoCampo($entrada)));
+    }
 
-
-    
-function validarCampoTexto($entrada)
-{
-    return ((!empty(filtrarEntrada($entrada))) && (validarLargoCampo($entrada)));
-}
-
-function validarLargoCampo($entrada)
-{
-    return (strlen(trim($entrada)) > 1);
-}
+    function validarLargoCampo($entrada)
+    {
+        return (strlen(trim($entrada)) > 1);
+    }
         
 //FUNCIONES PARA GESTIONAR USUARIOS
         //Función que crea un nuevo registro de usuario.
-       /* function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
+      
+        function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
         {
             try {
-                $conn = establecerConexionPDO('tareas');
-        
-                $sql = "INSERT INTO usuarios (username, nombre, apellidos, contraseña)
-                        VALUES (:username, :nombre, :apellidos, :contraseña)";
-                $stmt = $conn->prepare($sql);
              
+                $conn = establecerConexionPDO('tareas');
+            
+                $sql= 'INSERT INTO usuarios (username, nombre, apellidos, contraseña) VALUES (:username, :nombre, :apellidos, :contrasena)';
+                $stmt = $conn->prepare($sql);
+         
                 $stmt->bindParam(':username', $username, PDO::PARAM_STR);
                 $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
                 $stmt->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
-                $stmt->bindParam(':contraseña', $contraseña, PDO::PARAM_STR);
-             
-                 $correcto=$stmt->execute();
-                 if($correcto) {
-                   $last_id = $conn->lastInsertId();
-                   return $last_id;  
-                 } else{
-                    error_log("error al insertar el usuario");
+                $stmt->bindParam(':contrasena', $contraseña, PDO::PARAM_STR);
+
+                // Ejecuta la consulta
+                $correcto = $stmt->execute();
+                if ($correcto) {
+                    // Obtiene el ID de la última inserción
+                    $last_id = $conn->lastInsertId();
+                    return $last_id;
+                } else {
+                    return("*******Error al insertar el usuario.");
                     return false;
-                 }
-               
-            }
-            catch (PDOException $e) {
-                error_log("Error al insertar el usuario: " . $e->getMessage());
+                }
+            } catch (PDOException $e) {
+                return("///////Error al insertar el usuario: " . $e->getMessage());
                 return false;
-            }
-            finally
-            {
+            } finally {
+                // Limpia la conexión explícitamente (opcional)
                 $conn = null;
+                $stmt->closeCursor();
             }
-        }  
-*/
-function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
-{
-    try {
-        // Establece conexión usando la función personalizada
-        $conn = establecerConexionPDO('tareas');
-
-        // Ajusta el nombre de la columna y los parámetros
-    
-        $sql= 'INSERT INTO usuarios (username, nombre, apellidos, contraseña) VALUES (:username, :nombre, :apellidos, :contraseña)';
-        $stmt = $conn->prepare($sql);
-
-        // Vincula los parámetros
-        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
-        $stmt->bindParam(':apellidos', $apellidos, PDO::PARAM_STR);
-        $stmt->bindParam(':contraseña', $contraseña, PDO::PARAM_STR);
-
-        // Ejecuta la consulta
-        $correcto = $stmt->execute();
-        if ($correcto) {
-            // Obtiene el ID de la última inserción
-            $last_id = $conn->lastInsertId();
-            return $last_id;
-        } else {
-            error_log("*******Error al insertar el usuario.");
-            return false;
         }
-    } catch (PDOException $e) {
-        error_log("///////Error al insertar el usuario: " . $e->getMessage());
-        return false;
-    } finally {
-        // Limpia la conexión explícitamente (opcional)
-        $conn = null;
-    }
-}
 
 
 
@@ -257,6 +214,7 @@ function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
                 return [false, $e->getMessage()];
             } finally {
                 $conn = null; // Cerrar conexión
+                $stmt->closeCursor();
             }
         }
 
@@ -308,6 +266,46 @@ function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
         }
 
 //FUNCIONES PARA GESTIONAR TAREAS
+
+        //Función que inserta una tarea en la tabla de tareas.
+        function nuevaTarea($titulo, $descripcion, $estado, $id_usuario)
+        {
+            try {
+                $conexion = conexionMysqli('db', 'root', 'test', 'tareas');
+                
+                if ($conexion->connect_error)
+                {
+                    return [false, $conexion->error];
+                }
+                else
+                {
+                    $stmt = $conexion->prepare("INSERT INTO tareas (titulo, descripcion, estado, id_usuario) VALUES (?,?,?,?)");
+                    $stmt->bind_param("sssi",$titulo, $descripcion, $estado, $id_usuario);
+        
+                    $stmt->execute();
+        
+                    return [true, 'Tarea creada correctamente.'];
+                }
+            }
+            catch (mysqli_sql_exception $e)
+            {
+                return [false, $e->getMessage()];
+            }
+            finally
+            {
+                cerrarConexion($conexion);
+            }
+        }
+
+        //Función para obtener usuarios de la tabla usuarios para utilizarla cuando creo tarea nueva
+        function obtenerUsuarios() {
+            $conn = establecerConexionPDO('tareas');
+            $sql = "SELECT id, username FROM usuarios";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
         //Función que lista tareas con nombre de usuario que las realizó
         function listaTareas() {
             try {
@@ -389,6 +387,7 @@ function nuevoUsuario($username, $nombre, $apellidos, $contraseña)
                 return [false, $e->getMessage()];
             } finally {
                 $conn = null; // Cerrar conexión
+                $stmt->closeCursor();
             }
         }
 

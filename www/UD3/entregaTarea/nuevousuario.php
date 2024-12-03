@@ -21,11 +21,9 @@
                 </div>
 
                 <div class="container justify-content-between">
-                    <?php
-               
-
-                require('funcionesDB.php'); // Define funciones como nuevoUsuario()
-                require_once('./conexiones/PDO.php'); // Define la conexión a la base de datos
+                <?php
+                require_once('funcionesDB.php');
+                require_once('./conexiones/PDO.php'); 
 
                 if($_SERVER['REQUEST_METHOD'] == 'POST'){
                     //Recuperamos los datos del formulario
@@ -35,7 +33,7 @@
                     $contraseña = $_POST['contraseña'];
                 }
 
-                if (!empty($_POST)) { // Cambiado a POST
+                if (!empty($_POST)) { 
                     // Validar entradas
                     $username = entradaValida($_POST['username']);
                     $nombre = entradaValida($_POST['nombre']);
@@ -67,70 +65,16 @@
                         // Cifrar la contraseña
                         $contraseña = password_hash($contraseña, PASSWORD_DEFAULT);
 
-                $resultado=nuevoUsuario($username, $nombre, $apellidos, $contraseña);
+                    $resultado=nuevoUsuario($username, $nombre, $apellidos, $contraseña);
             
-                                        // Intentar registrar el usuario
-                                        if ($resultado) {
-                                            echo "Usuario registrado con ID: $resultado";
-                                        } else {
-                                            echo "??????Error al registrar el usuario.";
-                                        }
+                        // Intentar registrar el usuario
+                        if ($resultado) {
+                            echo "Usuario registrado con ID: $resultado";
+                        } else {
+                            echo "??????Error al registrar el usuario.";
+                        }
                     }
                 }
-                
-                /*if (!empty($_GET)) {
-                   
-                    // Validar entradas   
-                    $username = entradaValida($_GET['username']);
-             
-                    $nombre = entradaValida($_GET['nombre']);
-            
-                    $apellidos = entradaValida($_GET['apellidos']); 
-             
-                    $contraseña = entradaValida($_GET['contraseña']); // Asegúrate de que esta función cifre la contraseña
-            
-                    $error=false;
-                   // Validar  que no haya errores en los campos
-                   if (!validarCampoTexto($username))
-                   {
-                       $error = true;
-                 
-                       echo '<div class="alert alert-danger" role="alert">Revisa el campo usuario.</div>';
-                   }
-                   if (!validarCampoTexto($nombre))
-                   {
-                       $error = true;
-                  
-                       echo '<div class="alert alert-danger" role="alert">Revisa el campo nombre.</div>';
-                   }
-                   if (!validarCampoTexto($apellidos))
-                   {
-                       $error = true;
-                 
-                       echo '<div class="alert alert-danger" role="alert">Revisa el campo apellidos.</div>';
-                   }
-                   if (!validarCampoTexto($contraseña))
-                   {
-                       $error = true;
-                
-                       echo '<div class="alert alert-danger" role="alert">Revisa el campo contraseña.</div>';
-                   } 
-                    if(!$error)
-                    {
-                       
-                        if (nuevoUsuario($username, $nombre, $apellidos, $contraseña))
-                        {
-                            echo '<div class="alert alert-success" role="alert">Usuario registrado correctamente.</div>'; 
-
-                        } else {
-                            echo '<div class="alert alert-danger" role="alert">Ocurrió un error registrando el usuario.</div>'; 
-                        }
-                    }  else {
-                        echo '<div class="alert alert-warning" role="alert">No se pudo procesar el contenido del formulario.</div>';
-                         
-                    }
-                
-                }*/
                 
                 ?>
                 </div>

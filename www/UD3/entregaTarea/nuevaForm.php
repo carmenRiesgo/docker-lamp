@@ -19,7 +19,11 @@
                 <div class="container justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h2>Nueva tarea</h2>
                 </div>
-
+    <?php
+    require_once('funcionesDB.php');
+    require_once ('./conexiones/PDO.php');
+    $usuarios = obtenerUsuarios();
+    ?>
                 <div class="container justify-content-between">
                     <form action="nueva.php" method="POST" class="mb-5 w-50">
                         <div class="mb-3">
@@ -42,17 +46,14 @@
                         <div class="mb-3">
                             <label for="id_usuario" class="form-label">ID del Usuario</label>
                             <input type="hidden" name="id_usuario" value="<?php echo $id_usuario ?? '' ?>">
-                            <select class="form-select" id="id_usuario" name="id_usuario" required <?php echo isset($id_usuario) ? 'disabled' : '' ?>>
-                                <option <?php echo !isset($id_usuario) ? 'selected' : '' ?> disabled value="">Seleccione un id_usuario</option>
-                                <?php foreach ($id_usuarios as $id_usuario): ?>
-                                    <option value="<?= $id_usuario['id']; ?>" <?php echo isset($id_usuario) && $id_usuario == $id_usuario['id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($id_usuario['nombre']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <select class="form-select" id="id_usuario" name="id_usuario" required>
+                                    <?php foreach ($usuarios as $usuario): ?>
+                                    <option value="<?= $usuario['id'] ?>"><?= $usuario['username'] ?></option>
+                                    <?php endforeach; ?></select><br><br>
                         </div>
-
-                        <button type="submit" class="btn btn-primary">Enviar</button>
+                        <div>
+                             <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>                       
                     </form>
                 </div>
             </main>
